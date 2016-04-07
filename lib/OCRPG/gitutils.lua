@@ -6,6 +6,8 @@ local term 		 = require("term")
 local event 	 = require("event")
 local keyboard 	 = require("keyboard")
 
+local gitutils = {}
+
 if fs.exists(target) then
 	if not fs.isDirectory(target) then
 		error("Target directory already exists and is not a directory.")
@@ -19,7 +21,7 @@ else
 	end
 end
 
-local function gitContent(repo, dir)
+local function gitutils.gitContent(repo, dir)
 	local url = "https://api.github.com/repos/"..repo.."/contents"..dir
 	local result,response = pcall(internet.request,url)
 	local raw = ""
@@ -56,8 +58,8 @@ local function gitContent(repo, dir)
 	return files,directories
 end
 
-local function downloadGit(repo, target, replaceMode)
-	local files,dirs = gitContent(repo, "")
+local function gitutils.downloadGit(repo, target, replaceMode)
+	local files,dirs = gitutils.gitContent(repo, "")
 	
 	for i=1,#dirs do
 		if fs.exists(target..dirs[i]) then
@@ -129,7 +131,4 @@ local function downloadGit(repo, target, replaceMode)
 	end
 end
 
-return {
-	"downloadGit" = downloadGit,
-	"gitContent" = gitContent
-}
+return gitutils
